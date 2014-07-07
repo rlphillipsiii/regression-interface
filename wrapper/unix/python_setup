@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export PYTHONPATH=$REGRESSION_INT/pylib
+
+python "$@"

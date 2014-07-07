@@ -1,0 +1,4 @@
+#!/bin/sh
+
+"Dummy failing test on setup script"
+exit 1
