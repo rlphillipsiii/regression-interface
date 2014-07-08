@@ -1,6 +1,9 @@
 import os
 import glob
 import subprocess
+import yaml
+
+config_file = 'test_metadata.conf'
 
 def is_testcase_dir(path):
     pwd = os.getcwd()
@@ -8,11 +11,7 @@ def is_testcase_dir(path):
     os.chdir(path)
     files = glob.glob('*')
 
-    for req in ['setup', 'test', 'cleanup']:
-        if not req in files and not req+'.bat' in files:
-            return False
-
-    return True
+    return (config_file in files)
 
 def find_testcases(recursive):
     if not recursive:
@@ -41,16 +40,32 @@ def _find_testcases():
     return tests
 
 def run_script(script):
-    proc = subprocess.Popen([script])
+    print 'Executing Command: %s' % script
+    
+    proc = subprocess.Popen(script)
     proc.wait()
 
     return (proc.returncode == 0)
 
-def has_bat_ext(path):
-    if os.path.exists(path+'setup.bat'):
-        return True
-    else:
-        return False
+def validate_configuration(config):
+    msg_base = 'The \'%s\' field is missing from the test case metadata.'
+    msg_base += '  The test case will be ignored.'
+    
+    if not 'name' in config:
+        msg = msg_base % 'NAME'
+        raise MalformedTestCaseException(msg)
+
+    if not 'setup' in config:
+        msg = msg_base % 'SETUP'
+        raise MalformedTestCaseException(msg)
+
+    if not 'cleanup' in config:
+        msg = msg_base % 'CLEANUP'
+        raise MalformedTestCaseException(msg)
+
+    if not 'dotest' in config:
+        msg = msg_base % 'DOTEST'
+        raise MalformedTestCaseException(msg)
         
 def write_test_summary(tc):
     pass
@@ -62,8 +77,12 @@ class TestSuite:
         
     def build_testsuite(self, tests):
         for tc in tests:
-            self.testcases.append(TestCase(path))
-
+            try:
+                self.testcases.append(TestCase(tc))
+            except MalformedTestCaseException as e:
+                print 'Error while processing %s' % tc
+                print e
+                
     def get_tests(self):
         return self.testcases
         
@@ -89,20 +108,35 @@ class TestCase:
         self.status = None
         self.message = ''
 
-        if has_bat_ext(path):
-            self.setup = './setup.bat'
-            self.test = './test.bat'
-            self.cleanup = './cleanup.bat'
-        else:
-            self.setup = 'setup'
-            self.test = 'test'
-            self.cleanup = 'cleanup'
+        self.load_configuration()
+        
+    def load_configuration(self):
+        config = None
+        
+        try:
+            config = yaml.load(open(os.path.join(self.path, config_file), 'r').read())
+        except:
+            msg = 'Failed to parse metadata.  Test case will be ignored'
+            raise MalformedTestCaseException(msg)
+
+        validate_configuration(config)
+        self.name = config['name']
+        self.setup = config['setup']
+        self.test = config['dotest']
+        self.cleanup = config['cleanup']
+
+    def pass_test(self, quiet=False):
+        if not quiet:
+            print 'Test %s passed.' % self.name
             
-    def pass_test(self):
         self.status = True
 
     def fail_test(self, message):
         self.status = False
+
+        print 'Test %s failed.' % self.name
+        print 'Reason: %s' % message
+        
         self.message = message
         
     def get_status(self):
@@ -111,15 +145,26 @@ class TestCase:
     def run_test(self, strict):
         pwd = os.getcwd()
 
+        print 'Running Test: %s' % self.name
+        
         os.chdir(self.path)
         if not run_script(self.setup):
-            self.fail_test('Abnormal exit from \'setup\'')
+            self.fail_test('Abnormal exit from \'SETUP\'.')
         elif not run_script(self.test):
-            self.fail_test('The \'test\' script inidicated a failure')
+            self.fail_test('The \'DOTEST\' command exited with a non-zero return code.')
         elif not run_script(self.cleanup) and strict:
-            self.fail_test('Abnormal exit from \'cleanup\'')
+            self.fail_test('Abnormal exit from \'CLEANUP\'.')
         else:
             self.pass_test()
 
+        print ''
+        
         write_test_summary([self])
         os.chdir(pwd)
+
+class MalformedTestCaseException(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return 'Error Message: %s' % self.value

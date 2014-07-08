@@ -59,6 +59,8 @@ if len(tests) == 0:
     sys.exit(1)
 
 if list_only:
+    print '%d Test(s) Found' % len(tests)
+    
     base = ''
     if recursive:
         base = os.path.commonprefix(tests)

@@ -1,3 +1,4 @@
 #!/bin/sh
 
-echo "Dummy passing test"
+echo "Dummy failing test"
+exit 1

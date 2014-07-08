@@ -1,5 +1,5 @@
 
-class CommandLineError(Exception):
+class CommandLineException(Exception):
     def __init__(self, value):
         self.value = value
 
@@ -33,7 +33,7 @@ class Opts:
     
             return self.cmd
         except:
-            raise CommandLineError('Incorrect Number of Args')
+            raise CommandLineException('Incorrect Number of Args')
             
     def get_args(self):
         return self.cmd
