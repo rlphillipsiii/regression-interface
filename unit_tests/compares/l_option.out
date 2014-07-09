@@ -1,0 +1,7 @@
+Base Directory: /cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/
+
+Example Failing Test        : dummy/failing_test
+Example Failing Test Setup  : dummy/failing_test_setup
+Example Failing Test Strict : dummy/failing_test_strict
+Example Passing Test        : dummy/passing_test
+Test(s) Found: 4

@@ -1,3 +1,4 @@
 #!/bin/sh
 
 echo "Dummy passing test"
+sleep 2

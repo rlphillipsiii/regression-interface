@@ -1,0 +1,4 @@
+# -*- mode: sh; -*-
+
+COMPARE=unit_tests/compares
+GOLDEN=unit_tests/goldens
