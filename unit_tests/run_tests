@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cd $REGRESSION_INT/unit_tests
-
-for tc in $( ls *.tst ); do
-    ./$tc
-done
