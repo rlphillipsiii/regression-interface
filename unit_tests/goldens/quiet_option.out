@@ -1,0 +1,25 @@
+Dummy failing test
+Dummy failing test on strict only
+Dummy passing test
+Running Test: Example Failing Test
+Executing Command: ./setup
+Executing Command: ./test
+Test "Example Failing Test" failed.
+Reason: The "DOTEST" command exited with a non-zero return code.
+
+Running Test: Example Failing Test Setup
+Executing Command: ./setup
+[Errno 2] No such file or directory
+Test "Example Failing Test Setup" failed.
+Reason: Abnormal exit from "SETUP".
+
+Running Test: Example Failing Test Strict
+Executing Command: ./setup
+Executing Command: ./test
+Executing Command: ./cleanup
+
+Running Test: Example Passing Test
+Executing Command: ./setup
+Executing Command: ./test
+Executing Command: ./cleanup
+

@@ -1,0 +1,27 @@
+Dummy passing test
+Running Test: Example Failing Test Setup
+Executing Command: ./setup
+[Errno 2] No such file or directory
+Test "Example Failing Test Setup" failed.
+Reason: Abnormal exit from "SETUP".
+
+Running Test: Example Passing Test
+Executing Command: ./setup
+Executing Command: ./test
+Executing Command: ./cleanup
+Test Example Passing Test passed.
+
+TYPE: Suite
+COMMAND: /cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/scripts/regressions.py -r -e unit_tests/extras/excluded_tests
+TIME_RUN:
+RUNTIME:
+PASSES: 1
+FAILURES: 1
+TOTAL: 2
+
+PASS:
+    Example Passing Test|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/passing_test
+
+FAIL:
+    Example Failing Test Setup|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/failing_test_setup
+

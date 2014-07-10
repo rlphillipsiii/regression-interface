@@ -1,0 +1,14 @@
+# -*- mode: sh; -*-
+
+COMPARE=unit_tests/compares
+GOLDEN=unit_tests/goldens
+
+remove_var_fields() {
+    sed 's/^RUNTIME:.*/RUNTIME:/' $1 > tmp.txt
+    sed 's/^TIME_RUN:.*/TIME_RUN:/' tmp.txt > $1
+
+    rm tmp.txt
+}
+
+harness=$( echo $name | sed 's/ /_/g' )
+harness="$harness.out"

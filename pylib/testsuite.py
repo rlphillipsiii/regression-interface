@@ -78,9 +78,11 @@ def validate_configuration(config):
         msg = 'Test name contains illegal characters'
         msg += '  The test case will be ignored'
         raise MalformedTestCaseNameException(msg)
+
         
 class TestSuite:
-    def __init__(self, tests=[]):
+    def __init__(self, cmd, tests=[]):
+        self.cmd = cmd
         self.testcases = []
         self.start_time = datetime.datetime.now()
         
@@ -99,7 +101,22 @@ class TestSuite:
             except MalformedTestCaseException as e:
                 print 'Illegal test case name in %s' % tc
                 print e
+
+    def remove_tests(self, names):
+        for name in names:
+            index = self.is_in_testcases(name)
+            if index == -1:
+                continue
                 
+            del self.testcases[index]
+
+    def is_in_testcases(self, name):
+        for i in range(len(self.testcases)):
+            if self.testcases[i].matches(name):
+                return i
+
+        return -1
+        
     def get_tests(self):
         return self.testcases
         
@@ -134,6 +151,7 @@ class TestSuite:
 
     def get_suite_summary(self):
         log =  'TYPE: Suite\n'
+        log += 'COMMAND: %s\n' % self.cmd
         log += 'TIME_RUN: %s\n' % self.start_time.strftime('%d %B %Y %H:%M:%S')
         log += 'RUNTIME: %d\n' % self.runtime
         log += 'PASSES: %d\n' % len(self.passes)
@@ -160,7 +178,8 @@ class TestSuite:
         
         if not quiet:
             print summary
-        
+
+
 class TestCase:
     def __init__(self, path, status=None):
         self.path = path
@@ -180,11 +199,14 @@ class TestCase:
             raise MalformedTestCaseException(msg)
 
         validate_configuration(config)
-        self.name = config['name']
+        self.name = config['name'].lstrip().rstrip()
         self.setup = config['setup']
         self.test = config['dotest']
         self.cleanup = config['cleanup']
 
+    def matches(self, name):
+        return (self.name == name)
+        
     def pass_test(self, quiet):
         if not quiet:
             print 'Test %s passed.' % self.name

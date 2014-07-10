@@ -1,0 +1,24 @@
+#!/bin/sh
+
+$REGRESSION_INT/scripts/regressions.py $flags &> $COMPARE/$harness
+remove_var_fields $COMPARE/$harness
+
+rm $REGRESSION_INT/testsuite.log &> /dev/null
+
+if [[ "$1" == "-u" ]]; then
+    mv $COMPARE/$harness $GOLDEN
+    echo "$name golden updated successfully"
+
+    exit 0
+fi
+
+out=$( diff $COMPARE/$harness $GOLDEN/$harness )
+if [[ "$out" == "" ]]; then
+    echo "$name test passed"
+    rm $COMPARE/$harness
+else
+    echo "$name test failed"
+    echo "------------------- DIFF RESULTS -------------------"
+    echo "$out"
+    echo "----------------------------------------------------"
+fi

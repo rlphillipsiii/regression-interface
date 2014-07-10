@@ -10,7 +10,7 @@ import sys
 import os
 
 # pylib imports
-import testsuite as ts
+import testsuite
 import commandopts as opts
 
 from testsuite import TestSuite
@@ -19,24 +19,36 @@ help_string = """
 Usage: %s [ options ]
 
     Options:
-        -h|--help      - prints this message and exits
-        -r|--recursive - recursively searches for testcases
-        -s|--strict    - any non-zero exit code will produce a failure
-                         as opposed to the default which will only
-                         produce a failure on non-zero exit codes from
-                         the setup and test scripts
-        -e|--exclude <file>
-""" % sys.argv[0]
+        -h|--help
+            Prints this message and exits.
 
-# 
+        -r|--recursive
+            Recursively searches for testcases.
+
+        -s|--strict
+            Any non-zero exit code will produce a failure as opposed
+            to the default which will only produce a failure on 
+            non-zero exit codes from the setup and test scripts.
+
+        -q|--quiet
+            Surpresses the test suite summary output and the passed
+            test messages.
+
+        -e|--exclude <file>
+            Specifies a file containing a list of tests that should
+            be excluded from the run if they are recursively found.
+            The file should contain the name of each test on its
+            own line.  In other words, it is a newline separated
+            list of test names that should be ignored.
+""" % sys.argv[0]
 
 cmdline = opts.Opts()
 cmdline.add_option('-h', alternate='--help')
 cmdline.add_option('-r', alternate='--recursive')
 cmdline.add_option('-s', alternate='--script')
-cmdline.add_option('-e', alternate='--exclude')
 cmdline.add_option('-l', alternate='--list')
 cmdline.add_option('-q', alternate='--quiet')
+cmdline.add_option('-e', alternate='--exclude', value=True)
 
 args = cmdline.parse_args(sys.argv)
 
@@ -61,12 +73,20 @@ if '-l' in args:
 if '-q' in args:
     quiet = True
     
-tests = ts.find_testcases(recursive)
+tests = testsuite.find_testcases(recursive)
 if len(tests) == 0:
     print 'Error: no testcases were found.'
     sys.exit(1)
 
-suite = TestSuite(tests=tests)
+suite = TestSuite(' '.join(sys.argv), tests=tests)
+if exclude_file is not None:
+    try:
+        names = [ n.lstrip().rstrip() for n in open(exclude_file, 'r').read().lstrip().rstrip().split('\n') ]
+        suite.remove_tests(names)
+    except OSError as e:
+        print 'Warning: an error occurred while parsing the exclude file'
+        print e
+        
 if list_only:
     base = ''
     if recursive and len(tests) > 1:

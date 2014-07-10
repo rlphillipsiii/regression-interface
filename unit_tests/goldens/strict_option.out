@@ -1,0 +1,44 @@
+Dummy failing test
+Dummy failing test on strict only
+Dummy passing test
+Running Test: Example Failing Test
+Executing Command: ./setup
+Executing Command: ./test
+Test "Example Failing Test" failed.
+Reason: The "DOTEST" command exited with a non-zero return code.
+
+Running Test: Example Failing Test Setup
+Executing Command: ./setup
+[Errno 2] No such file or directory
+Test "Example Failing Test Setup" failed.
+Reason: Abnormal exit from "SETUP".
+
+Running Test: Example Failing Test Strict
+Executing Command: ./setup
+Executing Command: ./test
+Executing Command: ./cleanup
+Test "Example Failing Test Strict" failed.
+Reason: Abnormal exit from "CLEANUP".
+
+Running Test: Example Passing Test
+Executing Command: ./setup
+Executing Command: ./test
+Executing Command: ./cleanup
+Test Example Passing Test passed.
+
+TYPE: Suite
+COMMAND: /cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/scripts/regressions.py -s -r
+TIME_RUN:
+RUNTIME:
+PASSES: 1
+FAILURES: 3
+TOTAL: 4
+
+PASS:
+    Example Passing Test|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/passing_test
+
+FAIL:
+    Example Failing Test|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/failing_test
+    Example Failing Test Setup|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/failing_test_setup
+    Example Failing Test Strict|/cygdrive/c/Users/Robert/Documents/GitWorkspace/regression_interface/dummy/failing_test_strict
+
