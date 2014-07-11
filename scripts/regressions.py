@@ -49,7 +49,8 @@ cmdline.add_option('-s', alternate='--script')
 cmdline.add_option('-l', alternate='--list')
 cmdline.add_option('-q', alternate='--quiet')
 cmdline.add_option('-e', alternate='--exclude', value=True)
-
+cmdline.add_option('-t', alternate='--thread', value=True)
+                   
 args = cmdline.parse_args(sys.argv)
 
 exclude_file = None
@@ -58,6 +59,7 @@ recursive = False
 strict = False
 list_only = False
 quiet = False
+threads = 0
 
 if '-h' in args:
     print help_string
@@ -72,6 +74,8 @@ if '-l' in args:
     list_only = True
 if '-q' in args:
     quiet = True
+if '-t' in args:
+    threads = int(args['-t'])
     
 tests = testsuite.find_testcases(recursive)
 if len(tests) == 0:
@@ -98,4 +102,7 @@ if list_only:
     
     sys.exit(0)
 
-suite.run_suite(strict, quiet)
+if threads == 0:
+    suite.run_suite(strict, quiet)
+else:
+    print 'Operation not supported yet...'
