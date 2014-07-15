@@ -14,6 +14,7 @@ import testsuite
 import commandopts as opts
 
 from testsuite import TestSuite
+from testsuite import OperationNotImplementedException
 
 help_string = """
 Usage: %s [ options ]
@@ -50,16 +51,19 @@ cmdline.add_option('-l', alternate='--list')
 cmdline.add_option('-q', alternate='--quiet')
 cmdline.add_option('-e', alternate='--exclude', value=True)
 cmdline.add_option('-t', alternate='--thread', value=True)
-                   
+cmdline.add_option('-p', alternate='--process', value=True)
+
 args = cmdline.parse_args(sys.argv)
 
 exclude_file = None
 
 recursive = False
-strict = False
+strict    = False
 list_only = False
-quiet = False
+quiet     = False
+
 threads = 0
+procs   = 0
 
 if '-h' in args:
     print help_string
@@ -76,6 +80,8 @@ if '-q' in args:
     quiet = True
 if '-t' in args:
     threads = int(args['-t'])
+if '-p' in args:
+    procs = int(args['-p'])
     
 tests = testsuite.find_testcases(recursive)
 if len(tests) == 0:
@@ -102,7 +108,9 @@ if list_only:
     
     sys.exit(0)
 
-if threads == 0:
-    suite.run_suite(strict, quiet)
+if threads > 0:
+    raise OperationNotImplementedException('Threading not quite ready yet...Sorry')
+else if procs > 0:
+    raise OperationNotImplementedException('Multiple processes not quite ready yet...Sorry')
 else:
-    print 'Operation not supported yet...'
+    suite.run_suite(strict, quiet)

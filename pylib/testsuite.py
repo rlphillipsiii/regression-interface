@@ -4,9 +4,9 @@ import subprocess
 import yaml
 import datetime
 
-config_file = 'test_metadata.conf'
+config_file   = 'test_metadata.conf'
 testsuite_log = 'testsuite.log'
-testcase_log = 'testcase.log'
+testcase_log  = 'testcase.log'
 
 def is_testcase_dir(path):
     pwd = os.getcwd()
@@ -54,6 +54,13 @@ def run_script(script):
         print e
         return False
 
+def run_regression(flags):
+    script = os.path.join(os.environ['REGRESSION_INT'], 'scripts')
+    script = os.path.join(script, 'regression.py')
+    
+    proc = subprocess.Popen([script] + flags)
+    return proc
+    
 def validate_configuration(config):
     msg_base = 'The "%s" field is missing from the test case metadata.'
     msg_base += '  The test case will be ignored.'
@@ -258,15 +265,22 @@ class TestCase:
         log = self.get_test_summary()
         
 class MalformedTestCaseException(Exception):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, message):
+        self.message = message
 
     def __str__(self):
-        return 'Error Message: %s' % self.value
+        return 'Error Message: %s' % self.message
 
 class MalformedTestCaseNameException(Exception):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, message):
+        self.message = message
 
     def __str__(self):
-        return 'Error Message: %s' % self.value
+        return 'Error Message: %s' % self.message
+
+class OperationNotImplementedException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return 'Error Message: %s' % self.message
